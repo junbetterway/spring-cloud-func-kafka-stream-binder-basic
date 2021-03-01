@@ -1,4 +1,4 @@
-# Event Driven Architecture Using Spring Cloud Stream/Function - Kafka
+# Event Driven Architecture Using Spring Cloud Stream/Function - Apache Kafka
 __[Event-driven architecture](https://en.wikipedia.org/wiki/Event-driven_architecture)__ is a software architecture paradigm promoting the production, detection, consumption of, and reaction to events. It was created to help developers have a decoupled and responsive application. Because of this, it has been widely used in applications that have been broken down from monoliths to microservices. 
 
 __[Spring Cloud Stream](https://docs.spring.io/spring-cloud-stream/docs/current/reference/html/#_quick_start)__ improves your productivity when working with Apache Kafka, RabbitMQ, Azure Event Hub, and more, providing three key abstractions to simplify your code. 
@@ -163,6 +163,7 @@ kafka-console-producer --broker-list localhost:19092 --topic createAccountsendEm
 Offset: 1   Key: empty   Timestamp: 2021-03-01 10:37:34.261 Headers: contentType: application/json, spring_json_header_types: {"contentType":"java.lang.String","target-protocol":"java.lang.String"}, target-protocol: kafka
 Hi Jun King Minon! Thank you for opening a new account with us amounting to 12000. Please click below link to confirm your online banking account. Cheers!
 ```
+
 
 ## Powered By
 Contact me at [junbetterway](mailto:jkpminon12@yahoo.com)
