@@ -3,9 +3,9 @@ __[Event-driven architecture](https://en.wikipedia.org/wiki/Event-driven_archite
 
 __[Spring Cloud Stream](https://docs.spring.io/spring-cloud-stream/docs/current/reference/html/#_quick_start)__ improves your productivity when working with Apache Kafka, RabbitMQ, Azure Event Hub, and more, providing three key abstractions to simplify your code. 
 
-__[Spring Cloud Function](https://spring.io/projects/spring-cloud-function)__, enables you to write functions once and run them anywhere (AWS, Azure, etc.), while continuing to use all the familiar and comprehensive Spring APIs. You can chain multiple functions together to create new capabilities
+__[Spring Cloud Function](https://spring.io/projects/spring-cloud-function)__ enables you to write functions once and run them anywhere (AWS, Azure, etc.), while continuing to use all the familiar and comprehensive Spring APIs. You can chain multiple functions together to create new capabilities
 
-The main goal of this __[repository](https://github.com/junbetterway/spring-cloud-func-kafka-stream-binder-basic)__ is to demonstrate how to create an event driven system which is simplified by using __Spring Cloud Stream/Function__. In particular, we will be using __[Spring Cloud Stream for Apache Kafka Binder](https://docs.spring.io/spring-cloud-stream-binder-kafka/docs/3.0.10.RELEASE/reference/html/spring-cloud-stream-binder-kafka.html#_apache_kafka_binder)__. Please visit my __[tutorial](https://github.com/junbetterway/spring-kafka-basic)__ regarding the producer-consumer using Apache Kafka.
+The main goal of this __[repository](https://github.com/junbetterway/spring-cloud-func-kafka-stream-binder-basic)__ is to demonstrate how to create an event driven system which is simplified by using __Spring Cloud Stream/Function__. In particular, we will be using __[Spring Cloud Stream for Apache Kafka Binder](https://docs.spring.io/spring-cloud-stream-binder-kafka/docs/3.0.10.RELEASE/reference/html/spring-cloud-stream-binder-kafka.html#_apache_kafka_binder)__. Please visit my previous __[tutorial](https://github.com/junbetterway/spring-kafka-basic)__ to learn the basic of producer-consumer using Apache Kafka with Spring.
 
 ## Run the needed dependencies: Apache Kafka, Zookeeper and (optional) Kafdrop using Docker
 
@@ -33,9 +33,9 @@ To use __[Apache Kafka binder](https://docs.spring.io/spring-cloud-stream-binder
 
 The Apache Kafka Binder implementation maps each destination to an Apache Kafka topic. The consumer group maps directly to the same Apache Kafka concept. Partitioning also maps directly to Apache Kafka partitions as well.
 
-If you are developing on your local setup, there will be no additional steps to setup the __[Kafka Configuration Options](https://docs.spring.io/spring-cloud-stream-binder-kafka/docs/3.1.1/reference/html/spring-cloud-stream-binder-kafka.html#_configuration_options)__.
+If you are developing on your local setup, there will be no additional steps to setup the __[Kafka Configuration Options](https://docs.spring.io/spring-cloud-stream-binder-kafka/docs/3.1.1/reference/html/spring-cloud-stream-binder-kafka.html#_configuration_options)__ as long as your Apache Kafka properties are the defaults used by Spring Cloud Streams for Apache Kafka Binder.
 
-*__Note:__ The __docker-compose.yml__ ensures that the default configurations used by Spring Cloud Stream for Apache Kafka Binder is configured such as port 9092 etc.*
+*__Note:__ The __docker-compose.yml__ ensures that the default configurations used by Spring Cloud Stream for Apache Kafka Binder are already configured such as port 9092 etc.*
 
 ## Spring Cloud Functions
 Our main class exposes three bean definitions:
@@ -70,7 +70,7 @@ public class SpringcloudfuncApplication {
 }
 ```
 
-Hence, if we run the application - Spring must be able to identify what functions you intend to run and how do want them to be composed of. For this tutorial, we will have the following configuration on our __application.yml__ file:
+Hence, if we run the application - Spring must be able to identify what functions we intend to run and how do we want them to be composed of. For this tutorial, we will have the following configuration on our __application.yml__ file:
 
 ```
 spring:
@@ -81,26 +81,32 @@ spring:
 
 Based from this, we have two callable functions: 
 
-1. The __greeter__ function which accepts a String message for Kafka topic __greeter-in-0__ and outputs the result into Kafka topic __greeter-out-0__.
-2. The __createAccount|sendEmail__ function composition wherein the __createAccount__ function accepts a JSON message for Kafka topic __createAccountsendEmail-in-0__ then provide its result as an input to __sendEmail__ function which then outputs the result into Kafka topic __createAccountsendEmail-out-0__.
+1. The __greeter__ function which accepts a String message from Kafka topic __greeter-in-0__ and outputs the result to Kafka topic __greeter-out-0__.
+2. The __createAccount|sendEmail__ function composition wherein the __createAccount__ function accepts a JSON message from Kafka topic __createAccountsendEmail-in-0__ then provide its result as an input to __sendEmail__ function which then outputs the result to Kafka topic __createAccountsendEmail-out-0__.
 
-*__Note:__ The Kafka topics I have mentioned above will all be generated by Spring during startup. It uses the function name with in-out tagging during discovery.*
+*__Note:__ The Kafka topics I have mentioned above will all be generated automatically by Spring during startup. It uses the function name with in-out tagging during discovery.*
 
 ## Run the Spring Boot Application Using Spring Tool Suite (STS)
 1. Download STS version 3.4.* (or better) from the [Spring website](https://spring.io/tools). STS is a free Eclipse bundle with many features useful for Spring developers.
 2. Right-click on the project or the main application class then select "Run As" > "Spring Boot App"
 
 ## Testing Events - Produce/Consume
-We will now test our application by attempting to produce messages on each topics and check it via Kafdrop or your terminal (since we enabled logging).
+We will now test our application by attempting to produce messages on each topic and check the results via __Kafdrop__ Web or via server console (since we enabled logging).
 
-*__Note:__ We will use the docker interactive shell by connecting to the container running the Kafka image. *
+*__Note:__ We will use the docker interactive shell by connecting to the container running the Kafka image.*
 
 ### A. Greeter Function
 1. Run __docker ps__ command and take note of the container ID running the Apache Kafka image
-2. Run below command to connect to docker interactive shell. I have used __winpty__ since my local setup is running on Windows. If you are running on Linux or MacOS then remove the __winpty__ from command below:
+2. Run below command to connect to docker interactive shell. 
 
 ```
 winpty docker exec -it <containerId> bash
+```
+
+I have used __winpty__ above since my local setup is running on Windows. If you are running on Linux or MacOS then remove the __winpty__ and just run below command:
+
+```
+docker exec -it <containerId> bash
 ```
 
 3. Create/produce a String message to the target topic __greeter-in-0__
@@ -125,10 +131,16 @@ Jun King Minon
 
 ### B. Create Account Then Send Email Function Composition
 1. Run __docker ps__ command and take note of the container ID running the Apache Kafka image
-2. Run below command to connect to docker interactive shell. I have used __winpty__ since my local setup is running on Windows. If you are running on Linux or MacOS then remove the __winpty__ from command below:
+2. Run below command to connect to docker interactive shell. 
 
 ```
 winpty docker exec -it <containerId> bash
+```
+
+I have used __winpty__ above since my local setup is running on Windows. If you are running on Linux or MacOS then remove the __winpty__ and just run below command:
+
+```
+docker exec -it <containerId> bash
 ```
 
 3. Create/produce a JSON message to the target topic __createAccountsendEmail-in-0__
